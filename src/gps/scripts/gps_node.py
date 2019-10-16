@@ -183,6 +183,7 @@ def transmitGPS():
     global variable ROS_REFRESH_RATE.
     '''
     gps_interface = SerialInterface("/dev/serial0", 9600, 3000)
+    msg = NavSatFix()
     pub = rospy.Publisher('ant_gps', NavSatFix, queue_size=10)
     rospy.init_node('antenna_gps', anonymous=True)
     rate = rospy.Rate(ROS_REFRESH_RATE)
@@ -190,8 +191,9 @@ def transmitGPS():
     while not rospy.is_shutdown():
         received_data = gps_interface.readSerialInput()                 # Get serial data
         [latitude, longitude] = parser.getGPSLocation(received_data)    # Parse data and set message fields
-        pub.latitude = latitude                                         # Publish coordinates
-        pub.longitude = longitude
+        msg.latitude = latitude                                         # Publish coordinates
+        msg.longitude = longitude
+        pub.publish(msg)
         rate.sleep()                                                    # Sleep until next check
 
 if __name__ == '__main__':
