@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 '''
 NOVA ROVER TEAM
 
@@ -11,8 +13,6 @@ https://cdn-learn.adafruit.com/downloads/pdf/adafruit-ultimate-gps.pdf
 Author: Andrew Stuart (94andrew.stuart@gmail.com)
 Last modified: 20/09/2019
 '''
-
-#!/usr/bin/env python
 
 import rospy
 import serial
