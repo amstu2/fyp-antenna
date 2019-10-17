@@ -32,6 +32,7 @@ class Entity:
         bearing = math.degrees(math.atan2(y, x))
         if(bearing < 0):
             bearing = 360 + bearing
+        rospy.loginfo("Bearing: " + bearing)
         return bearing
 
 
@@ -39,13 +40,15 @@ class Entity:
         distance = self.getDistanceToEntity(external_entity)
         altitude_difference = self.altitude - external_entity.altitude
         elevation = math.atan2(altitude_difference, distance)
+        rospy.loginfo("Elevation: " + elevation)
         return elevation
 
     def getDistanceToEntity(self, external_entity):
         EARTH_RADIUS = 6371
-        delta_x = (math.radians(external_entity.longitude) - math.radians(self.longitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
-        delta_y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
-        distance = EARTH_RADIUS * math.sqrt(pow(delta_x,2)+pow(delta_y,2))
+        x = (math.radians(external_entity.longitude) - math.radians(self.longitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
+        y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
+        distance = EARTH_RADIUS * math.sqrt(pow(x,2)+pow(y,2))
+        rospy.loginfo("Distance: " + distance)
         return distance
         
     def getBearingToEntity2(self, extern_entity_lat, extern_entity_long):
@@ -63,12 +66,14 @@ def calculateAntennaBearing():
 
 def antGPSCallback(data):
     antenna.setGPSCoordinates(data.latitude, data.longitude)
+    antenna.setAltitude(data.altitude)
     antenna.has_GPS_fix = True
     antenna.ROSLogGPSCoordinates()
 
 
 def roverGPSCallback(data):
     rover.setGPSCoordinates(data.latitude, data.longitude)
+    rover.setAltitude(data.altitude)
     rover.ROSLogGPSCoordinates()
     if(antenna.has_GPS_fix):
         rospy.loginfo(antenna.getElevationToEntity(rover))
