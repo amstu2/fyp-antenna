@@ -8,8 +8,8 @@ from  sensor_msgs.msg import NavSatFix
 class Entity:
     def __init__(self, name = 'Untitled'):
         self.name = name
-        self.latitude = latitude
-        self.longitude = longitude
+        self.latitude = 0.00000
+        self.longitude = 0.00000
 
     def ROSLogGPSCoordinates(self):
         rospy.loginfo("\r\n" + self.name + " GPS Coordinates: \r\nLatitude: " + str(self.latitude) + "\r\nLongitude: " + str(self.longitude))
