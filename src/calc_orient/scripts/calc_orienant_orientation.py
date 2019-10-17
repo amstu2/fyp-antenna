@@ -11,6 +11,7 @@ class Entity:
         self.latitude = 0.00000
         self.longitude = 0.00000
         self.altitude = 0.000
+        self.has_GPS_fix = False
 
     def ROSLogGPSCoordinates(self):
         rospy.loginfo("\r\n" + self.name + " GPS Coordinates: \r\nLatitude: " + str(self.latitude) + "\r\nLongitude: " + str(self.longitude))
@@ -33,14 +34,15 @@ class Entity:
             bearing = 360 + bearing
         return bearing
 
-    def calculateDistanceToEntity(self, external_entity):
+    def getDistanceToEntity(self, external_entity):
         EARTH_RADIUS = 6371
         delta_x = (math.radians(external_entity.longitude) - math.radians(self.longitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
         delta_y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
         return (EARTH_RADIUS * math.sqrt(pow(delta_x,2)+pow(delta_y,2)))
 
 
-    #def getElevationToEntity(self,external_entity):
+    def getElevationToEntity(self, external_entity):
+        rospy.loginfo(getDistanceToEntity(self,external_entity))
         
         
 
@@ -59,19 +61,22 @@ def calculateAntennaBearing():
 
 def antGPSCallback(data):
     antenna.setGPSCoordinates(data.latitude, data.longitude)
+    antenna.has_GPS_fix = True
     antenna.ROSLogGPSCoordinates()
 
 
 def roverGPSCallback(data):
     rover.setGPSCoordinates(data.latitude, data.longitude)
     rover.ROSLogGPSCoordinates()
-    rospy.loginfo(antenna.calculateDistanceToEntity(rover))
+    if(antenna.has_GPS_fix):
+        rospy.loginfo(antenna.getElevationToEntity(rover))
 
 def calculateAntennaOrientation():
     rospy.Subscriber('ant_gps', NavSatFix, antGPSCallback)
     rospy.Subscriber('rover_gps', NavSatFix, roverGPSCallback)
     rospy.init_node('ant_orient', anonymous=True)
     rospy.spin()
+
 
 antenna = Entity('Antenna')
 rover = Entity('Rover')
