@@ -183,7 +183,7 @@ def transmitGPS():
     on the serial line and converts this data to GPS coordinates if available. The frequency of checks depends on the 
     global variable ROS_REFRESH_RATE.
     '''
-    gps_interface = SerialInterface("/dev/serial0", 9600, 3000)
+    gps_interface = SerialInterface("/dev/serial0", 9600, 0)
     msg = NavSatFix()
     pub = rospy.Publisher('ant_gps', NavSatFix, queue_size=10)
     rospy.init_node('antenna_gps', anonymous=True)
@@ -196,8 +196,9 @@ def transmitGPS():
             msg.latitude = latitude                                         # Publish coordinates
             msg.longitude = longitude
             pub.publish(msg)
-            rate.sleep() # Sleep until next check
+            rate.sleep()
         except:
+            rospy.loginfo("NO GPS FIX")
             rate.sleep()
             pass
 
