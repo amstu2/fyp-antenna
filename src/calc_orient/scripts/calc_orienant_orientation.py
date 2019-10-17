@@ -6,7 +6,7 @@ from  sensor_msgs.msg import NavSatFix
 
 
 class Entity:
-    def __init__(self, name = 'Untitled', latitude = 0.00, longitude = 0.00):
+    def __init__(self, name = 'Untitled'):
         self.name = name
         self.latitude = latitude
         self.longitude = longitude
@@ -39,9 +39,8 @@ def calculateAntennaBearing():
     antenna.getBearingToEntity(rover)
 
 def antGPSCallback(data):
-    rover.latitude = data.latitude
-    rover.longitude = data.longitude
-    rover.ROSLogGPSCoordinates()
+    antenna.setGPSCoordinates(data.latitude, data.longitude)
+    antenna.ROSLogGPSCoordinates()
 
 
 def roverGPSCallback(data):
@@ -54,8 +53,8 @@ def calculateAntennaOrientation():
     rospy.init_node('ant_orient', anonymous=True)
     rospy.spin()
 
-antenna = Entity('Antenna',-37.937804, 145.013067)
-rover = Entity('Rover',-37.936482, 145.014253)
+antenna = Entity('Antenna')
+rover = Entity('Rover')
 
 if __name__ == '__main__':
     try:
