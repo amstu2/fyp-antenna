@@ -36,7 +36,7 @@ class Entity:
 
         
 def calculateAntennaBearing():
-    antenna.getBearingToEntity(rover)
+    return antenna.getBearingToEntity(rover)
 
 def antGPSCallback(data):
     antenna.setGPSCoordinates(data.latitude, data.longitude)
@@ -44,8 +44,9 @@ def antGPSCallback(data):
 
 
 def roverGPSCallback(data):
-    rover.latitude = data.latitude
-    rover.longitude = data.longitude
+    rover.setGPSCoordinates(data.latitude, data.longitude)
+    rover.ROSLogGPSCoordinates()
+    rospy.loginfo(calculateAntennaBearing())
 
 def calculateAntennaOrientation():
     rospy.Subscriber('ant_gps', NavSatFix, antGPSCallback)
