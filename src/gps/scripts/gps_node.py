@@ -163,6 +163,7 @@ class NMEAParser:
                 if(data_line[2:5] == 'RMC'): # The line containing the GPS coordinates has the identifier RMC
                     split_RMC_line = data_line.split(',')   # Split RMC line into different fields
                     if(len(split_RMC_line) <> 13):  # 13 fields are expected, variations from this point to corruption
+                        rospy.loginfo(split_RMC_line)
                         rospy.logwarn("INVALID RMC READING - CHECK FOR HARDWARE CORRUPTION")
                         return
                     if(split_RMC_line[2] == 'V'):   # V is printed at the end of the line if no fix has been established
@@ -171,7 +172,7 @@ class NMEAParser:
                     elif(split_RMC_line[2] == 'A'): # A indicates a valid GPS fix
                         return self.__formatGPSData(split_RMC_line[3:7]) # Format the GPS data into decimal degrees
                     else:
-                        rospy.logwarn("INVALID RMC READING - CHECK FOR HARDWARE CORRUPTION")
+                        rospy.logwarn("INVALID RMC READING - CORRUPTION")
                         return
 
 
@@ -189,12 +190,16 @@ def transmitGPS():
     rate = rospy.Rate(ROS_REFRESH_RATE)
     parser = NMEAParser('NMEA_0183')
     while not rospy.is_shutdown():
-        received_data = gps_interface.readSerialInput()                 # Get serial data
-        [latitude, longitude] = parser.getGPSLocation(received_data)    # Parse data and set message fields
-        msg.latitude = latitude                                         # Publish coordinates
-        msg.longitude = longitude
-        pub.publish(msg)
-        rate.sleep()                                                    # Sleep until next check
+        try:
+            received_data = gps_interface.readSerialInput()                 # Get serial data
+            [latitude, longitude] = parser.getGPSLocation(received_data)    # Parse data and set message fields
+            msg.latitude = latitude                                         # Publish coordinates
+            msg.longitude = longitude
+            pub.publish(msg)
+            rate.sleep() # Sleep until next check
+        except:
+            rate.sleep()
+            pass
 
 if __name__ == '__main__':
     try:
