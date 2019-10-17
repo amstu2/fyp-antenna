@@ -35,8 +35,8 @@ class Entity:
 
     def calculateDistanceToEntity(self, external_entity):
         EARTH_RADIUS = 6371
-        delta_x = (math.radians(external_entity.latitude) - math.radians(self.latitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
-        delta_y = (math.radians(external_entity.longitude) - math.radians(self.longitude))
+        delta_x = (math.radians(external_entity.longtitude) - math.radians(self.longitude)) * math.cos((math.radians(self.longitude) + math.radians(external_entity.longitude))/2)
+        delta_y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
         return (EARTH_RADIUS * math.sqrt(pow(delta_x,2)+pow(delta_y,2)))
 
 
