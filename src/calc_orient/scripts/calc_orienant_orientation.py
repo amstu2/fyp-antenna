@@ -35,8 +35,8 @@ class Entity:
 
     def calculateDistanceToEntity(self, external_entity):
         EARTH_RADIUS = 6371
-        delta_x = (external_entity.latitude - self.latitude) * math.cos((self.latitude - external_entity.latitude)/2)
-        delta_y = (external_entity.longitude - self.longitude)
+        delta_x = (math.radians(external_entity.latitude) - math.radians(self.latitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
+        delta_y = (math.radians(external_entity.longitude) - math.radians(self.longitude))
         return (EARTH_RADIUS * math.sqrt(pow(delta_x,2)+pow(delta_y,2)))
 
 
@@ -65,7 +65,7 @@ def antGPSCallback(data):
 def roverGPSCallback(data):
     rover.setGPSCoordinates(data.latitude, data.longitude)
     rover.ROSLogGPSCoordinates()
-    rospy.loginfo(calculateAntennaBearing())
+    rospy.loginfo(antenna.calculateDistanceToEntity(rover))
 
 def calculateAntennaOrientation():
     rospy.Subscriber('ant_gps', NavSatFix, antGPSCallback)
