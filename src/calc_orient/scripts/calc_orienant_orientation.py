@@ -39,9 +39,9 @@ def calculateAntennaBearing():
     antenna.getBearingToEntity(rover)
 
 def antGPSCallback(data):
-    rospy.loginfo("New ANT GPS")
     rover.latitude = data.latitude
     rover.longitude = data.longitude
+    rover.ROSLogGPSCoordinates()
 
 
 def roverGPSCallback(data):
