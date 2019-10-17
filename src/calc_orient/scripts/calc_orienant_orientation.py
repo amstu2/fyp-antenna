@@ -32,7 +32,7 @@ class Entity:
         bearing = math.degrees(math.atan2(y, x))
         if(bearing < 0):
             bearing = 360 + bearing
-        rospy.loginfo("Bearing: " + bearing)
+        rospy.loginfo("Bearing: " + str(bearing))
         return bearing
 
 
@@ -40,7 +40,7 @@ class Entity:
         distance = self.getDistanceToEntity(external_entity)
         altitude_difference = self.altitude - external_entity.altitude
         elevation = math.atan2(altitude_difference, distance)
-        rospy.loginfo("Elevation: " + elevation)
+        rospy.loginfo("Elevation: " + str(elevation))
         return elevation
 
     def getDistanceToEntity(self, external_entity):
@@ -48,7 +48,7 @@ class Entity:
         x = (math.radians(external_entity.longitude) - math.radians(self.longitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
         y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
         distance = EARTH_RADIUS * math.sqrt(pow(x,2)+pow(y,2))
-        rospy.loginfo("Distance: " + distance)
+        rospy.loginfo("Distance: " + str(distance))
         return distance
         
     def getBearingToEntity2(self, extern_entity_lat, extern_entity_long):
