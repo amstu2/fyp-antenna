@@ -10,6 +10,7 @@ class Entity:
         self.name = name
         self.latitude = 0.00000
         self.longitude = 0.00000
+        self.altitude = 0.000
 
     def ROSLogGPSCoordinates(self):
         rospy.loginfo("\r\n" + self.name + " GPS Coordinates: \r\nLatitude: " + str(self.latitude) + "\r\nLongitude: " + str(self.longitude))
@@ -20,6 +21,9 @@ class Entity:
     def setGPSCoordinates(self, latitude, longitude):
         self.latitude = latitude
         self.longitude = longitude
+
+    def setAltitude(self, altitude):
+        self.altitude = altitude
         
     def getBearingToEntity(self, external_entity):
         y = math.sin(external_entity.longitude - self.longitude) * math.cos(external_entity.latitude)
@@ -28,6 +32,17 @@ class Entity:
         if(bearing < 0):
             bearing = 360 + bearing
         return bearing
+
+    def calculateDistanceToEntity(self, external_entity):
+        EARTH_RADIUS = 6371
+        delta_x = (external_entity.latitude - self.latitude) * math.cos((self.latitude - external_entity.latitude)/2)
+        delta_y = (external_entity.longitude - self.longitude)
+        return (EARTH_RADIUS * math.sqrt(pow(delta_x,2)+pow(delta_y,2)))
+
+
+    #def getElevationToEntity(self,external_entity):
+        
+        
 
     def getBearingToEntity2(self, extern_entity_lat, extern_entity_long):
         y = math.sin(extern_entity_long - self.longitude) * math.cos(extern_entity_lat)
