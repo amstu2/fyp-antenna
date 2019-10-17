@@ -34,18 +34,16 @@ class Entity:
             bearing = 360 + bearing
         return bearing
 
+
+    def getElevationToEntity(self, external_entity):
+        rospy.loginfo(self.getDistanceToEntity(external_entity))
+
     def getDistanceToEntity(self, external_entity):
         EARTH_RADIUS = 6371
         delta_x = (math.radians(external_entity.longitude) - math.radians(self.longitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
         delta_y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
         return (EARTH_RADIUS * math.sqrt(pow(delta_x,2)+pow(delta_y,2)))
-
-
-    def getElevationToEntity(self, external_entity):
-        rospy.loginfo(getDistanceToEntity(self,external_entity))
         
-        
-
     def getBearingToEntity2(self, extern_entity_lat, extern_entity_long):
         y = math.sin(extern_entity_long - self.longitude) * math.cos(extern_entity_lat)
         x = math.cos(self.latitude)*math.sin(extern_entity_lat) - math.sin(self.latitude)*math.cos(extern_entity_lat)*math.cos(extern_entity_long-self.longitude)
