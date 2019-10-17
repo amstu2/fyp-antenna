@@ -5,6 +5,7 @@ import math
 from  sensor_msgs.msg import NavSatFix
 
 
+
 class Entity:
     def __init__(self, name = 'Untitled'):
         self.name = name
@@ -38,7 +39,7 @@ class Entity:
 
     def getElevationToEntity(self, external_entity):
         distance = self.getDistanceToEntity(external_entity)
-        altitude_difference = self.altitude - external_entity.altitude
+        altitude_difference = external_entity.altitude - self.altitude
         elevation = math.atan2(altitude_difference, distance)
         rospy.loginfo("Elevation: " + str(elevation))
         return elevation
@@ -76,6 +77,7 @@ def roverGPSCallback(data):
     rover.setAltitude(data.altitude)
     rover.ROSLogGPSCoordinates()
     if(antenna.has_GPS_fix):
+        rospy.loginfo(antenna.getBearingToEntity(rover))
         rospy.loginfo(antenna.getElevationToEntity(rover))
 
 def calculateAntennaOrientation():
