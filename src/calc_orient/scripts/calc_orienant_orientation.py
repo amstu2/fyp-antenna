@@ -76,6 +76,7 @@ def roverGPSCallback(data):
     rover.setGPSCoordinates(data.latitude, data.longitude)
     rover.setAltitude(data.altitude)
     rover.ROSLogGPSCoordinates()
+    rover.has_GPS_fix = True
     if(antenna.has_GPS_fix):
         rospy.loginfo(antenna.getBearingToEntity(rover))
         rospy.loginfo(antenna.getElevationToEntity(rover))
