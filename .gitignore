@@ -1,3 +1,7 @@
 build/
 devel/
 .catkin_workspace
+
+src/calc_orient/CMakeLists.txt
+
+src/calc_orient/package.xml
