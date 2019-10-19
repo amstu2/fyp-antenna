@@ -3,8 +3,11 @@
 import rospy
 import math
 from  sensor_msgs.msg import NavSatFix
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Bool
 
-
+antenna_is_auto = True
+orient_pub = rospy.Publisher('ant_orientation', Float32MultiArray, queue_size=10)
 
 class Entity:
     def __init__(self, name = 'Untitled'):
@@ -49,8 +52,9 @@ class Entity:
         x = (math.radians(external_entity.longitude) - math.radians(self.longitude)) * math.cos((math.radians(self.latitude) + math.radians(external_entity.latitude))/2)
         y = (math.radians(external_entity.latitude) - math.radians(self.latitude))
         distance = EARTH_RADIUS * math.sqrt(pow(x,2)+pow(y,2))
-        rospy.loginfo("Distance: " + str(distance))
-        return distance
+        distance_metres = distance * 1000
+        rospy.loginfo("Distance: " + str(distance_metres))
+        return distance_metres
         
     def getBearingToEntity2(self, extern_entity_lat, extern_entity_long):
         y = math.sin(extern_entity_long - self.longitude) * math.cos(extern_entity_lat)
@@ -73,17 +77,27 @@ def antGPSCallback(data):
 
 
 def roverGPSCallback(data):
+    global antenna_is_auto
     rover.setGPSCoordinates(data.latitude, data.longitude)
     rover.setAltitude(data.altitude)
     rover.ROSLogGPSCoordinates()
     rover.has_GPS_fix = True
-    if(antenna.has_GPS_fix):
-        rospy.loginfo(antenna.getBearingToEntity(rover))
-        rospy.loginfo(antenna.getElevationToEntity(rover))
+    if(antenna.has_GPS_fix and antenna_is_auto):
+        orientation = [None] * 2
+        raw_bearing = antenna.getBearingToEntity(rover)
+        raw_elevation = antenna.getElevationToEntity(rover)
+        orientation[0] = round(raw_bearing,1)
+        orientation[1] = round(raw_elevation,1)
+        orient_pub.publish(orientation)
+
+def autoSwitchCallback(data):
+    global antenna_is_auto 
+    antenna_is_auto = data
 
 def calculateAntennaOrientation():
     rospy.Subscriber('ant_gps', NavSatFix, antGPSCallback)
     rospy.Subscriber('rover_gps', NavSatFix, roverGPSCallback)
+    rospy.Subscriber('ant_is_auto', Bool, autoSwitchCallback)
     rospy.init_node('ant_orient', anonymous=True)
     rospy.spin()
 
