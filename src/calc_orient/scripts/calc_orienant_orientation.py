@@ -44,9 +44,10 @@ class Entity:
     def getElevationToEntity(self, external_entity):
         distance = self.getDistanceToEntity(external_entity)
         altitude_difference = external_entity.altitude - self.altitude
-        elevation = math.atan2(altitude_difference, distance)
-        rospy.loginfo("Elevation: " + str(elevation))
-        return elevation
+        elevation_radians = math.atan2(altitude_difference, distance)
+        elevation_degrees = math.degrees(elevation_radians)
+        rospy.loginfo("Elevation: " + str(elevation_degrees))
+        return elevation_degrees
 
     def getDistanceToEntity(self, external_entity):
         EARTH_RADIUS = 6371
@@ -86,8 +87,8 @@ def roverGPSCallback(data):
     if(antenna.has_GPS_fix and antenna_is_auto):
         raw_bearing = antenna.getBearingToEntity(rover)
         raw_elevation = antenna.getElevationToEntity(rover)
-        msg.x = round(raw_bearing, 1)
-        msg.y = round(raw_elevation, 1)
+        msg.x = raw_bearing
+        msg.y = raw_elevation
         orient_pub.publish(msg)
 
 def autoSwitchCallback(data):
