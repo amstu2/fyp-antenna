@@ -93,7 +93,7 @@ def roverGPSCallback(data):
 
 def autoSwitchCallback(data):
     global antenna_is_auto 
-    antenna_is_auto = data
+    antenna_is_auto = data.data
 
 def calculateAntennaOrientation():
     rospy.Subscriber('ant_gps', NavSatFix, antGPSCallback)
