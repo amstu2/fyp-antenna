@@ -3,11 +3,12 @@
 import rospy
 import math
 from  sensor_msgs.msg import NavSatFix
-from std_msgs.msg import Float32MultiArray
+from geometry_msgs.msg import Point32
 from std_msgs.msg import Bool
 
 antenna_is_auto = True
-orient_pub = rospy.Publisher('ant_orientation', Float32MultiArray, queue_size=10)
+orient_pub = rospy.Publisher('ant_orientation', Point32, queue_size=10)
+msg = Point32()
 
 class Entity:
     def __init__(self, name = 'Untitled'):
@@ -83,12 +84,11 @@ def roverGPSCallback(data):
     rover.ROSLogGPSCoordinates()
     rover.has_GPS_fix = True
     if(antenna.has_GPS_fix and antenna_is_auto):
-        orientation = [None] * 2
         raw_bearing = antenna.getBearingToEntity(rover)
         raw_elevation = antenna.getElevationToEntity(rover)
-        orientation[0] = round(raw_bearing,1)
-        orientation[1] = round(raw_elevation,1)
-        orient_pub.publish(orientation)
+        msg.x = round(raw_bearing, 1)
+        msg.y = round(raw_elevation, 1)
+        orient_pub.publish(msg)
 
 def autoSwitchCallback(data):
     global antenna_is_auto 
