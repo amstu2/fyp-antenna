@@ -53,7 +53,7 @@ def startNode():
     rospy.init_node('micro_interface', anonymous=True)
     time.sleep(1)
     micro_serial.write('B'.encode('utf-8'))
-    rospy.loginfo('B written')
+    rospy.loginfo('Enabling antenna...')
     while(in_setup):
         line = micro_serial.readline()
         rospy.loginfo(line)
@@ -71,7 +71,9 @@ def startNode():
         if(line[0] == 'O'):
             e_split = line.split('E')
             a_split = e_split[0].split('A')
-            current_azimuth = int(a_split[1])
+            current_azimuth = int(a_split[1])/10.0
+            if(current_azimuth > 360.0):
+                current azimuth = 720.0 - current_azimuth
             current_elevation = int(e_split[1])/100.0
             pos_msg.x = current_azimuth
             pos_msg.y = current_elevation
