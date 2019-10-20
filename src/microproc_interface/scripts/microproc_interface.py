@@ -26,6 +26,10 @@ def startNode():
             rospy.loginfo("Elevation limits received:")
             split_line = line.split('M')
             rospy.loginfo(split_line)
+            min_elevation = int(split_line[1])
+            rospy.loginfo(min_elevation)
+            max_elevation = int(split_line[2][:-4])
+            rospy.loginfo(max_elevation)
 
 
 
