@@ -14,15 +14,18 @@ def orientCallback(data):
 
 def startNode():
     global elevation_limits_received
-    micro_serial.write('B'.encode('utf-8'))
-    while (not elevation_limits_received):
-        line = micro_serial.readline()
-        rospy.loginfo(line)
-        time.sleep(1)
-        micro_serial.write('B'.encode('utf-8'))
-
     rospy.Subscriber('ant_orientation', Point32, orientCallback)
     rospy.init_node('micro_interface', anonymous=True)
+    time.sleep(1)
+    micro_serial.write('B'.encode('utf-8'))
+    rospy.loginfo('B written')
+    while (1):
+        line = micro_serial.readline()
+        rospy.loginfo(line)
+        #time.sleep(1)
+        #micro_serial.write('B'.encode('utf-8'))
+        #rospy.loginfo('B 2')
+
 
 
 
