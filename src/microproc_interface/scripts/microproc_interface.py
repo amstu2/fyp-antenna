@@ -14,8 +14,8 @@ def orientCallback(data):
     if(in_setup == False):
         raw_bearing = round(data.x,1)
         raw_elevation = round(data.y,1)
-        bearing = raw_bearing * 10
-        elevation = raw_elevation * 10
+        bearing = int(raw_bearing * 10)
+        elevation = int(raw_elevation * 10)
         rospy.loginfo(raw_bearing)
         rospy.loginfo(raw_elevation)
         bearing_hund = str(bearing // 1000)
