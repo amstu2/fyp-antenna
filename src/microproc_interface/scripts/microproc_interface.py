@@ -15,7 +15,7 @@ def startNode():
     global elevation_limits_received
     micro_serial.write('B'.encode('utf-8'))
     while (not elevation_limits_received):
-        line = micro_serial.readLine()
+        line = micro_serial.readline()
         rospy.loginfo(line)
 
     rospy.Subscriber('ant_orientation', Point32, orientCallback)
