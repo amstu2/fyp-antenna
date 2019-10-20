@@ -6,15 +6,18 @@ import time
 from geometry_msgs.msg import Point32
 
 in_setup = True
-min_elevation = 20
+min_elevation = 20 # arbitrary
 max_elevation = -9
 micro_serial = serial.Serial("/dev/ttyUSB0", 115200, timeout=None)
+current_pos_msg = Point32()
 
 def orientCallback(data):
     bearing = data.x
     elevation = data.y
+    rospy.loginfo("GOT INFO")
 
 def startNode():
+    global in_setup
     global min_elevation
     global max_elevation
     rospy.Subscriber('ant_orientation', Point32, orientCallback)
@@ -26,14 +29,24 @@ def startNode():
         line = micro_serial.readline()
         rospy.loginfo(line)
         if(line[0]=='L'):
-            rospy.loginfo("Elevation limits received:")
             split_line = line.split('M')
             rospy.loginfo(split_line)
             min_elevation = int(split_line[1])/100.0
-            rospy.loginfo(min_elevation)
+            rospy.loginfo("Minimum Elevation: " + min_elevation)
             max_elevation = int(split_line[2])/100.0
-            rospy.loginfo(max_elevation)
+            rospy.loginfo("Maximum Elevation: " + max_elevation)
             in_setup = False
+    serial_open = True
+    while(serial_open):
+        line = micro_serial.readline()
+        if(line[0] == 'O'):
+            e_split = line.split('E')
+            a_split = e_split[0].split('A')
+            current_azimuth = int(a_split[1])
+            current_elevation = int(e_split[1])
+            rospy.loginfo(current_azimuth)
+            rospy.loginfo(current_elevation)
+
 
 
 
