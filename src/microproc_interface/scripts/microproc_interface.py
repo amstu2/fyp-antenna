@@ -12,10 +12,30 @@ micro_serial = serial.Serial("/dev/ttyUSB0", 115200, timeout=None)
 
 def orientCallback(data):
     if(in_setup == False):
-        bearing = round(data.x,1)
-        elevation = round(data.y,1)
-        rospy.loginfo(bearing)
-        rospy.loginfo(elevation)
+        raw_bearing = round(data.x,1)
+        raw_elevation = round(data.y,1)
+        bearing = raw_bearing * 10
+        elevation = raw_elevation * 10
+        rospy.loginfo(raw_bearing)
+        rospy.loginfo(raw_elevation)
+        bearing_hund = str(bearing // 1000)
+        bearing = bearing % 1000
+        bearing_ten = str(bearing // 100)
+        bearing = bearing % 100
+        bearing_one = str(bearing // 10)
+        bearing = bearing % 10
+        bearing_dec = str(bearing // 1)
+        if(raw_elevation < 0):
+            elevation_sign = '-'
+        else:
+            elevation_sign = '+'
+        elevation_ten = str(elevation // 100)
+        elevation = elevation % 100
+        elevation_one = str(elevation // 10)
+        elevation = elevation % 10
+        elevation_dec = str(bearing // 1)
+
+        rospy.loginfo(bearing_hund+bearing_ten+bearing_one+bearing_dec+elevation_sign+elevation_ten+elevation_one+elevation_dec)
 
 def startNode():
     global in_setup
