@@ -5,7 +5,7 @@ import time
 
 from geometry_msgs.msg import Point32
 
-elevation_limits_received = False
+in_setup = True
 micro_serial = serial.Serial("/dev/ttyUSB0", 115200, timeout=None)
 
 def orientCallback(data):
@@ -19,12 +19,13 @@ def startNode():
     time.sleep(1)
     micro_serial.write('B'.encode('utf-8'))
     rospy.loginfo('B written')
-    while (1):
+    while(in_setup):
         line = micro_serial.readline()
         rospy.loginfo(line)
-        #time.sleep(1)
-        #micro_serial.write('B'.encode('utf-8'))
-        #rospy.loginfo('B 2')
+        if(line[0]=='L'):
+            rospy.loginfo("Elevation limits received:")
+            split_line = line.split('M')
+            rospy.loginfo(split_line)
 
 
 
