@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import serial
+import time
 
 from geometry_msgs.msg import Point32
 
@@ -17,6 +18,8 @@ def startNode():
     while (not elevation_limits_received):
         line = micro_serial.readLine()
         rospy.loginfo(line)
+        time.sleep(1)
+        micro_serial.write('B'.encode('utf-8'))
 
     rospy.Subscriber('ant_orientation', Point32, orientCallback)
     rospy.init_node('micro_interface', anonymous=True)
