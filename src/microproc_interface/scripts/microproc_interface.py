@@ -10,6 +10,11 @@ min_elevation = 20 # arbitrary
 max_elevation = -9
 micro_serial = serial.Serial("/dev/ttyUSB0", 115200, timeout=None)
 
+def writeToMicro(string):
+    data = '<' + string + '>'
+    rospy.loginfo(data)
+    micro_serial.write(data.encode('utf-8'))
+
 def orientCallback(data):
     if(in_setup == False):
         raw_bearing = round(data.x,1)
@@ -27,6 +32,7 @@ def orientCallback(data):
         bearing_dec = str(bearing // 1)
         if(raw_elevation < 0):
             elevation_sign = '-'
+            elevation = elevation * -1
         else:
             elevation_sign = '+'
         elevation_ten = str(elevation // 100)
@@ -35,7 +41,7 @@ def orientCallback(data):
         elevation = elevation % 10
         elevation_dec = str(elevation // 1)
 
-        rospy.loginfo(bearing_hund+bearing_ten+bearing_one+bearing_dec+elevation_sign+elevation_ten+elevation_one+elevation_dec)
+        writeToMicro('M'+bearing_hund+bearing_ten+bearing_one+bearing_dec+elevation_sign+elevation_ten+elevation_one+elevation_dec)
 
 def startNode():
     global in_setup
