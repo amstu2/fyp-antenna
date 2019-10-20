@@ -11,9 +11,11 @@ max_elevation = -9
 micro_serial = serial.Serial("/dev/ttyUSB0", 115200, timeout=None)
 
 def orientCallback(data):
-    bearing = data.x
-    elevation = data.y
-    rospy.loginfo("GOT INFO")
+    if(in_setup == False):
+        bearing = round(data.x,1)
+        elevation = round(data.y,1)
+        rospy.loginfo(bearing)
+        rospy.loginfo(elevation)
 
 def startNode():
     global in_setup
