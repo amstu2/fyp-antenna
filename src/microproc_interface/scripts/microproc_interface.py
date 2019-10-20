@@ -33,7 +33,7 @@ def orientCallback(data):
         elevation = elevation % 100
         elevation_one = str(elevation // 10)
         elevation = elevation % 10
-        elevation_dec = str(bearing // 1)
+        elevation_dec = str(elevation // 1)
 
         rospy.loginfo(bearing_hund+bearing_ten+bearing_one+bearing_dec+elevation_sign+elevation_ten+elevation_one+elevation_dec)
 
