@@ -4,11 +4,22 @@ import serial
 import time
 
 from geometry_msgs.msg import Point32
+from std_msgs.msg import Empty
 
 in_setup = True
 min_elevation = 20 # arbitrary
 max_elevation = -9
 micro_serial = serial.Serial("/dev/ttyUSB0", 115200, timeout=None)
+rospy.set_param('maximum_elevation', 0.0)
+rospy.set_param('minimum_elevation', 0.0)
+
+def resetCallBack(data):
+    rospy.loginfo("RESETTING NORTH")
+    writeToMicro('R')
+
+def killCallBack(data):
+    rospy.loginfo('KILLING MOTORS')
+    writeToMicro('K')
 
 def writeToMicro(string):
     data = '<' + string + '>'
@@ -49,7 +60,9 @@ def startNode():
     global max_elevation
     pos_msg = Point32()
     pos_pub = rospy.Publisher('current_orient', Point32, queue_size=10) 
+    rospy.Subscriber('reset_heading', Empty, resetCallBack)
     rospy.Subscriber('ant_orientation', Point32, orientCallback)
+    rospy.Subscriber('kill_motors', Empty, killCallBack)
     rospy.init_node('micro_interface', anonymous=True)
     time.sleep(3)
     micro_serial.write('BBBBBBB'.encode('utf-8'))
@@ -62,8 +75,10 @@ def startNode():
             rospy.loginfo(split_line)
             min_elevation = int(split_line[1])/100.0
             rospy.loginfo("Minimum Elevation: " + str(min_elevation))
+            rospy.set_param('minimum_elevation', min_elevation)
             max_elevation = int(split_line[2])/100.0
             rospy.loginfo("Maximum Elevation: " + str(max_elevation))
+            rospy.set_param('maximum_elevation', max_elevation)
             in_setup = False
     serial_open = True
     while(serial_open):
