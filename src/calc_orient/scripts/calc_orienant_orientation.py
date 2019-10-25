@@ -3,10 +3,13 @@
 import rospy
 import math
 from  sensor_msgs.msg import NavSatFix
+from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Point32
+from std_msgs.msg import Int16
 from std_msgs.msg import Bool
 
 antenna_is_auto = True
+radio_tx_rate = 50
 orient_pub = rospy.Publisher('ant_orientation', Point32, queue_size=10)
 msg = Point32()
 
@@ -17,6 +20,9 @@ class Entity:
         self.longitude = 0.00000
         self.altitude = 0.000
         self.has_GPS_fix = False
+        self.azimuth = 0.0
+        self.elevation = 0.0
+        self.radio_tx_rate = 0.0
 
     def ROSLogGPSCoordinates(self):
         rospy.loginfo("\r\n" + self.name + " GPS Coordinates: \r\nLatitude: " + str(self.latitude) + "\r\nLongitude: " + str(self.longitude))
@@ -95,10 +101,17 @@ def autoSwitchCallback(data):
     global antenna_is_auto 
     antenna_is_auto = data.data
 
+def currentOrientationCallback(data):
+    antenna.azimuth = data.x
+    antenna.elevation = data.y
 def calculateAntennaOrientation():
     rospy.Subscriber('ant_gps', NavSatFix, antGPSCallback)
     rospy.Subscriber('rover_gps', NavSatFix, roverGPSCallback)
     rospy.Subscriber('ant_is_auto', Bool, autoSwitchCallback)
+    rospy.Subscriber('current_orient',Point32, currentOrientationCallback)
+    rospy.Subscriber('sweep_enabled', Bool, sweepCallback)
+    rospy.Subscriber('/radio_signal', Int16, radioSignalCallback)
+    rospy.Subscriber('/radio_tx_rate',Int16, radioTXCallback)
     rospy.init_node('ant_orient', anonymous=True)
     rospy.spin()
 
