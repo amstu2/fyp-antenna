@@ -2,7 +2,7 @@
 
 import rospy
 import math
-from  sensor_msgs.msg import NavSatFix
+import time
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import Point32
 from std_msgs.msg import Int16
@@ -10,8 +10,11 @@ from std_msgs.msg import Bool
 
 antenna_is_auto = True
 radio_tx_rate = 50
+radio_signal_strength = -96
+
 orient_pub = rospy.Publisher('ant_orientation', Point32, queue_size=10)
 msg = Point32()
+sweeping_enabled = False
 
 class Entity:
     def __init__(self, name = 'Untitled'):
@@ -90,7 +93,7 @@ def roverGPSCallback(data):
     rover.setAltitude(data.altitude)
     rover.ROSLogGPSCoordinates()
     rover.has_GPS_fix = True
-    if(antenna.has_GPS_fix and antenna_is_auto):
+    if(antenna.has_GPS_fix and antenna_is_auto and (sweeping_enabled == False)):
         raw_bearing = antenna.getBearingToEntity(rover)
         raw_elevation = antenna.getElevationToEntity(rover)
         msg.x = raw_bearing
@@ -101,6 +104,23 @@ def autoSwitchCallback(data):
     global antenna_is_auto 
     antenna_is_auto = data.data
 
+def sweepCallback(data):
+    global sweeping_enabled
+    global antenna_is_auto
+    global radio_tx_rate
+    sweeping_enabled = data
+def radioTXCallback(data):
+    global radio_tx_rate
+    radio_tx_rate = data.data
+
+def radioSignalCallback(data):
+    global radio_signal_strength
+    radio_signal_strength = data.data
+
+            
+
+
+            
 def currentOrientationCallback(data):
     antenna.azimuth = data.x
     antenna.elevation = data.y
