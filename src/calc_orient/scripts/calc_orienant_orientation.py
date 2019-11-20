@@ -9,9 +9,8 @@ from std_msgs.msg import Int16
 from std_msgs.msg import Bool
 
 antenna_is_auto = True
-radio_tx_rate = 50
+radio_tx_rate = 0
 radio_signal_strength = -96
-
 orient_pub = rospy.Publisher('ant_orientation', Point32, queue_size=10)
 msg = Point32()
 sweeping_enabled = False
